@@ -2,7 +2,6 @@ module Player
   class ZypeRenderer < Player::Renderer
     def initialize(data_source, options={})
       super(data_source, options)
-      @referer_https = detect_referer_https
     end
 
     def render
@@ -49,19 +48,8 @@ module Player
     end   
     private :age_gate_plugin
 
-    def ga_plugin
-      {
-        ga: {
-          idstring: "title",
-          trackingobject: @data_source.video.site.ga_object,
-          label: "title"
-        }
-      }
-    end
-    private :ga_plugin
-
     def set_zype_player_components
-      player.merge!({
+      player['playlist'][0]merge!({
         image: default_thumbnail_url,
         tracks: subtitles
       })

@@ -27,13 +27,24 @@ module Player
     def manifest_params
       super.merge(audio: true)
     end
-    
+
+    def manifest_url
+      options = {
+        host: APP_CONFIG[:manifest_host], 
+        port: (APP_CONFIG[:manifest_https] ? APP_CONFIG[:https_port] : APP_CONFIG[:http_port]),
+        path: "/manifest/live/#{@data_source.video.id}.m3u8",
+        query: Rack::Utils.build_query(player_key: @data_source.video.player_key, token: manifest_token)
+      }
+
+      (APP_CONFIG[:manifest_https] ? URI::HTTPS : URI::HTTP).build(options).to_s
+    end
+
     def player
       @player ||= {
         playlist: [{
           sources: [{file: manifest_url}],
           title: @data_source.video.title,
-          mediaid: @data_source.video.id.to_s,
+          mediaid: @data_source.video.id.to_s
         }],
         plugins: {},
         androidhls: true,
@@ -55,6 +66,16 @@ module Player
       }
 
       (referer_https? ? URI::HTTPS : URI::HTTP).build(options).to_s
+    end
+
+     def ga_plugin
+      {
+        ga: {
+          idstring: "title",
+          trackingobject: @data_source.video.site.ga_object,
+          label: "title"
+        }
+      }
     end
   end
 end
