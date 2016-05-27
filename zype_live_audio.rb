@@ -1,6 +1,6 @@
 require 'aes_crypt'
 
-class Player::ZypeLiveAudio < Player::ZypeLive
+class Player::ZypeLiveAudio < Player::Player
   field :on_air_required, type: :boolean, default: true
   field :audio_required, type: :boolean, default: true
 
